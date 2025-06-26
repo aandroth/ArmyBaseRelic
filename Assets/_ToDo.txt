@@ -1,0 +1,35 @@
+Mercenary:
+	transition rooms
+	damage turrets
+	Take damage
+	Hack terminals
+
+	Terminals:
+		Hack meter
+
+AI:
+
+	Interface to:
+		turn on turrets
+		See remaining power
+		See map of the base
+		Distribute power
+	Turrets:
+		Take damage (when on)
+		Die
+		Repair turrets
+
+
+GameController:
+	Start both players
+	Connect those players to the backend
+	Send both players updates through WebSocket
+	Determine winner
+	Either player can start a match
+
+Backend:
+	Run in serverless Container
+	Use WebSockets
+	Have complete picture of game in progress
+	Put up a created match on the web client
+	Allow another player to join

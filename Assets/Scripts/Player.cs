@@ -19,6 +19,12 @@ public class Player : MonoBehaviour
 
     Camera mainCamera;
 
+    public Transform m_playerSpriteTransform;
+    public SpriteRenderer m_playerSprite;
+    public Sprite m_standingSprite;
+    public Animator m_animator;
+    public string m_runAnimationName;
+
     void Start()
     {
         // Cache the main camera for performance
@@ -34,12 +40,15 @@ public class Player : MonoBehaviour
         {
             m_rigidbody.AddForce(m_speed * transform.right);
             isMoving = true;
-
+            m_animator.enabled = true;
+            m_animator?.Play(m_runAnimationName);
         }
         if (Input.GetKey(KeyCode.A))
         {
             m_rigidbody.AddForce(-m_speed * transform.right);
             isMoving = true;
+            m_animator.enabled = true;
+            m_animator?.Play(m_runAnimationName);
         }
 
         if (isMoving)
@@ -53,6 +62,9 @@ public class Player : MonoBehaviour
         {
             if (!isMoving)
             {
+                m_animator.enabled = false;
+                m_playerSprite.sprite = m_standingSprite;
+
                 if (Mathf.Abs(m_rigidbody.linearVelocityX) > m_stoppingThreshold)
                     m_rigidbody.linearVelocityX *= m_stoppingFactor;
                 else
@@ -76,13 +88,11 @@ public class Player : MonoBehaviour
             // Calculate the direction vector from the GameObject to the mouse click
             Vector3 direction = mouseWorldPos - transform.position;
 
-            Debug.Log("Direction to Mouse Click: " + direction);
             GameObject bullet = GameObject.Instantiate(m_bulletPrefab, m_bulletSpawnPoint.transform.position, Quaternion.identity);
             bullet.GetComponent<Bullet_Player>().Fire(direction);
         }
 
 
-        // Draw debug line
         {
             // Get the mouse position in screen space
             Vector3 mouseScreenPos = Input.mousePosition;
@@ -91,9 +101,15 @@ public class Player : MonoBehaviour
             Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, mainCamera.WorldToScreenPoint(m_bulletSpawnPoint.position).z));
             mouseWorldPos.z = 0;
 
-            m_gunArm.transform.right = mouseWorldPos - m_gunArm.transform.position;
-            Debug.Log($"mouseWorldPos: {mouseWorldPos.x}, {mouseWorldPos.y}, {mouseWorldPos.z} | m_gunArm: {m_gunArm.transform.position.x}, {m_gunArm.transform.position.y}, {m_gunArm.transform.position.z}");
-            Debug.DrawLine(transform.position, mouseWorldPos);
+            m_gunArm.transform.right = Mathf.Sign(m_playerSprite.transform.localScale.x) * (mouseWorldPos - m_gunArm.transform.position);
+            //Debug.Log($"mouseWorldPos: {mouseWorldPos.x}, {mouseWorldPos.y}, {mouseWorldPos.z} | m_gunArm: {m_gunArm.transform.position.x}, {m_gunArm.transform.position.y}, {m_gunArm.transform.position.z}");
+            //Debug.DrawLine(transform.position, mouseWorldPos);
+
+            if ((mouseWorldPos.x > transform.position.x && m_playerSprite.transform.localScale.x < 0) ||
+                (mouseWorldPos.x < transform.position.x && m_playerSprite.transform.localScale.x > 0))
+                m_playerSprite.transform.localScale = new Vector3(m_playerSprite.transform.localScale.x * -1,
+                                                                  m_playerSprite.transform.localScale.y,
+                                                                  m_playerSprite.transform.localScale.z);
         }
     }
 }
