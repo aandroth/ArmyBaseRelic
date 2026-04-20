@@ -5,13 +5,20 @@ public class Blackout : MonoBehaviour
 {
     public float m_fadeOutTime = 3f;
     public float m_fadeInTime = 3f;
+    public float m_fadeOutHoldTime = 0.5f;
+    public float m_fadeInHoldTime = 0.5f;
 
     private float m_fadeOutTimeRemaining = 0f;
     private float m_fadeInTimePassed = 0f;
-    private SpriteRenderer m_blackoutSprite;
+    public SpriteRenderer m_blackoutSprite;
 
     private IEnumerator m_fadeOutEnumerator;
     private IEnumerator m_fadeInEnumerator;
+
+    public delegate void FadeOutDelegate();
+    public FadeOutDelegate m_fadeOutDelegate;
+    public delegate void FadeInDelegate();
+    public FadeInDelegate m_fadeInDelegate;
 
     public void Start()
     {
@@ -37,6 +44,13 @@ public class Blackout : MonoBehaviour
         m_fadeOutTimeRemaining = m_fadeOutTime;
         color.a = 0;
         m_blackoutSprite.color = color;
+
+        float holdTime = m_fadeOutHoldTime;
+        while (holdTime <= 0)
+        {
+            holdTime -= Time.deltaTime;
+            yield return null;
+        }
     }
 
     public void StartFadeIn()
@@ -47,6 +61,13 @@ public class Blackout : MonoBehaviour
 
     private IEnumerator FadeInCoroutine()
     {
+        float holdTime = m_fadeInHoldTime;
+        while (holdTime <= 0)
+        {
+            holdTime -= Time.deltaTime;
+            yield return null;
+        }
+
         Color color = m_blackoutSprite.color;
         while (color.a < 1)
         {

@@ -13,6 +13,8 @@ public class MoveToRoom : MonoBehaviour
     public Transform m_newPositionInRoom = null;
     public delegate void GameControllerMoveFunction(Transform t);
     public GameControllerMoveFunction m_gameControllerMoveFunction = null;
+    public delegate void GameControllerMovePrep();
+    public GameControllerMovePrep m_gameControllerMovePrep = null;
 
     public bool m_isReadyToMovePlayerOnTrigger = false;
 
@@ -51,6 +53,7 @@ public class MoveToRoom : MonoBehaviour
     }
     private IEnumerator RoomMoveCoroutine()
     {
+        m_gameControllerMovePrep.Invoke();
         while (m_moveToRoomDelayTimePassed < m_moveToRoomDelayTime)
         {
             m_moveToRoomDelayTimePassed += Time.deltaTime;

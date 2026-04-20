@@ -28,6 +28,7 @@ public class Camera_Behavior : MonoBehaviour
     {
         m_height = Camera.main.orthographicSize;
         m_width = m_height * Camera.main.aspect;
+        m_blackout.StartFadeOut();
     }
 
     public void SetMinAndMaxToWorldBounds()
@@ -79,5 +80,14 @@ public class Camera_Behavior : MonoBehaviour
             transform.position.z
             );
 
+    }
+
+    public void TriggerFadeIn()
+    {
+        m_blackout.StartFadeIn();
+    }
+    public void TriggerFadeOut()
+    {
+        m_blackout.StartFadeOut();
     }
 }

@@ -35,6 +35,7 @@ public class GameController: MonoBehaviour
         foreach (MoveToRoom transferPoint in m_transferPoints)
         {
             Debug.Log($"Transfer Point: {transferPoint.gameObject.name}");
+            transferPoint.GetComponent<MoveToRoom>().m_gameControllerMovePrep = TriggerCameraBlackout;
             transferPoint.GetComponent<MoveToRoom>().m_gameControllerMoveFunction = MovePlayerToPosition;
         }
     }
@@ -47,5 +48,11 @@ public class GameController: MonoBehaviour
     public void SetCameraWithNewBounds()
     {
         m_camera.GetComponent<Camera_Behavior>().SetMinAndMaxToWorldBounds();
+        m_camera.GetComponent<Camera_Behavior>().TriggerFadeOut();
+    }
+
+    public void TriggerCameraBlackout()
+    {
+        m_camera.GetComponent<Camera_Behavior>().TriggerFadeIn();
     }
 }
